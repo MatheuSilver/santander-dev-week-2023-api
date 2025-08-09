@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import me.dio.service.exception.BusinessException;
 import me.dio.service.exception.NotFoundException;
@@ -39,6 +40,22 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<APIError> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        StringBuilder details = new StringBuilder();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+            details.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ")
+        );
+        APIError apiError = new APIError(
+            LocalDateTime.now(),
+            HttpStatus.BAD_REQUEST.value(),
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            details.toString(),
+            request.getRequestURI()
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Throwable.class)

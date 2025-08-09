@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
 
 @Entity(name = "tb_account")
 public class Account {
@@ -16,6 +17,7 @@ public class Account {
     private Long id;
 
     @Column(unique = true)
+    @Size(min = 8, max = 20, message = "Número da conta deve ter entre 8 e 20 caracteres")
     private String number;
 
     private String agency;
