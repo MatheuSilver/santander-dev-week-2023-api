@@ -7,6 +7,8 @@ import me.dio.service.exception.BusinessException;
 import me.dio.service.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -35,6 +37,11 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public User findById(Long id) {
         return this.userRepository.findById(id).orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public Page<User> findByFilters(String name, String email, Pageable pageable) {
+        return this.userRepository.findByNameAndEmail(name, email, pageable);
     }
 
     @Transactional
